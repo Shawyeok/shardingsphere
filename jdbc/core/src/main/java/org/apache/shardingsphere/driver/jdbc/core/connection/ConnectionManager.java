@@ -155,6 +155,9 @@ public final class ConnectionManager implements ExecutorJDBCConnectionManager, A
         } else {
             connectionTransaction.commit();
         }
+        for (Connection connection : cachedConnections.values()) {
+            ConnectionSavepointManager.getInstance().transactionFinished(connection);
+        }
     }
     
     /**
@@ -167,6 +170,9 @@ public final class ConnectionManager implements ExecutorJDBCConnectionManager, A
             forceExecuteTemplate.execute(cachedConnections.values(), Connection::rollback);
         } else {
             connectionTransaction.rollback();
+        }
+        for (Connection connection : cachedConnections.values()) {
+            ConnectionSavepointManager.getInstance().transactionFinished(connection);
         }
     }
     
