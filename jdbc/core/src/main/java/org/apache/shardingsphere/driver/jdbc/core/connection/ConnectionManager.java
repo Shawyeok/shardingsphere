@@ -148,15 +148,18 @@ public final class ConnectionManager implements ExecutorJDBCConnectionManager, A
      * @throws SQLException SQL exception
      */
     public void commit() throws SQLException {
-        if (connectionTransaction.isLocalTransaction() && connectionTransaction.isRollbackOnly()) {
-            forceExecuteTemplate.execute(cachedConnections.values(), Connection::rollback);
-        } else if (connectionTransaction.isLocalTransaction() && !connectionTransaction.isRollbackOnly()) {
-            forceExecuteTemplate.execute(cachedConnections.values(), Connection::commit);
-        } else {
-            connectionTransaction.commit();
-        }
-        for (Connection connection : cachedConnections.values()) {
-            ConnectionSavepointManager.getInstance().transactionFinished(connection);
+        try {
+            if (connectionTransaction.isLocalTransaction() && connectionTransaction.isRollbackOnly()) {
+                forceExecuteTemplate.execute(cachedConnections.values(), Connection::rollback);
+            } else if (connectionTransaction.isLocalTransaction() && !connectionTransaction.isRollbackOnly()) {
+                forceExecuteTemplate.execute(cachedConnections.values(), Connection::commit);
+            } else {
+                connectionTransaction.commit();
+            }
+        } finally {
+            for (Connection connection : cachedConnections.values()) {
+                ConnectionSavepointManager.getInstance().transactionFinished(connection);
+            }
         }
     }
     
@@ -166,13 +169,16 @@ public final class ConnectionManager implements ExecutorJDBCConnectionManager, A
      * @throws SQLException SQL exception
      */
     public void rollback() throws SQLException {
-        if (connectionTransaction.isLocalTransaction()) {
-            forceExecuteTemplate.execute(cachedConnections.values(), Connection::rollback);
-        } else {
-            connectionTransaction.rollback();
-        }
-        for (Connection connection : cachedConnections.values()) {
-            ConnectionSavepointManager.getInstance().transactionFinished(connection);
+        try {
+            if (connectionTransaction.isLocalTransaction()) {
+                forceExecuteTemplate.execute(cachedConnections.values(), Connection::rollback);
+            } else {
+                connectionTransaction.rollback();
+            }
+        } finally {
+            for (Connection connection : cachedConnections.values()) {
+                ConnectionSavepointManager.getInstance().transactionFinished(connection);
+            }
         }
     }
     
