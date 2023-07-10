@@ -25,7 +25,7 @@
     </parent>
     <groupId>org.apache.shardingsphere</groupId>
     <artifactId>shardingsphere</artifactId>
-    <version>5.3.1.1</version>
+    <version>5.3.1.2</version>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
     <description>Build criterion and ecosystem above multi-model databases</description>
@@ -434,7 +434,7 @@
                 <version>${protobuf-java.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId> com.google.j2objc</groupId>
+                        <groupId>com.google.j2objc</groupId>
                         <artifactId>j2objc-annotations</artifactId>
                     </exclusion>
                 </exclusions>
@@ -1180,8 +1180,18 @@
         <connection>scm:git:https://github.com/apache/shardingsphere.git</connection>
         <developerConnection>scm:git:https://github.com/apache/shardingsphere.git</developerConnection>
         <url>https://github.com/apache/shardingsphere.git</url>
-        <tag>5.3.1.1</tag>
+        <tag>5.3.1.2</tag>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>legacy-releases</id>
+            <url>${releases.repo}</url>
+        </repository>
+        <snapshotRepository>
+            <id>legacy-snapshots</id>
+            <url>${snapshots.repo}</url>
+        </snapshotRepository>
+    </distributionManagement>
     
     <profiles>
         <profile>
